@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Fightcade</title>
+
+    <script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
+
+
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <style type='text/css'>
+        .form-control {
+            display: inline-block;
+            width: 200px;
+        }
+
+        body {
+            font-size: 14pt;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #form {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        #loader-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        #loader-container img {
+            margin-top: 50px;
+            width: 100px;
+        }
+    </style>
+
+
+    <script type='text/javascript'>//<![CDATA[
+
+    var httpHost = 'http://neogeodb:8765';
+
+    function attendance() {
+
+        $('#container').hide();
+        $('#loader').show();
+
+        var country = $('#countries').val();
+        var game = $('#games').val();
+        var url = httpHost+'/line?';
+        if(country) {
+            url += 'country='+country;
+        }
+        if(game) {
+            url += '&game='+game;
+        }
+
+        $.ajax({url:url,success:function (csv) {
+
+            $('#loader').hide();
+
+            $('#container').show().highcharts({
+
+                title: {
+                    text: ''
+                },
+
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+
+                xAxis: {
+                    categories: ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00', '23:00']
+                },
+
+                data: {
+                    csv: csv
+                },
+                chart: {
+                    type: 'spline'
+                }
+
+            });
+        }});
+
+    }
+
+    $.ajax({url: httpHost + '/countries',success:function (countries) {
+        var countryList = $('#countries');
+        countries.forEach(function(country) {
+            countryList.append('<option value="'+country+'">'+country+'</option>');
+        });
+        countryList.change(attendance);
+    }});
+
+    $.ajax({url: httpHost + '/games',success:function (games) {
+        var gameList = $('#games');
+        games.forEach(function(game) {
+            gameList.append('<option value="'+game[0]+'">'+game[1]+'</option>');
+        });
+        gameList.change(attendance);
+    }});
+
+    attendance();
+    //]]>
+
+    </script>
+
+
+</head>
+<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/data.js"></script>
+<script src="http://code.highcharts.com/modules/heatmap.js"></script>
+
+<h1>Fightcade</h1>
+
+<div id="form">
+    When should I play <select class="form-control" id="games"></select> if I live in <select class="form-control"
+                                                                                              id="countries"></select> ?
+</div>
+
+<div id="loader-container">
+    <img src="http://www.mytreedb.com/uploads/mytreedb/loader/ajax_loader_blue_512.gif" id="loader"/>
+</div>
+
+<div id="container" style="height: 400px; min-width: 310px; max-width: 800px; margin: 0 auto"></div>
+
+
+</body>
+
+
+</html>

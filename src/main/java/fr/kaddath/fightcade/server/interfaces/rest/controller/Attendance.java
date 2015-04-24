@@ -1,4 +1,4 @@
-package fr.kaddath.fightcade.server.interfaces.rest.controller.agency;
+package fr.kaddath.fightcade.server.interfaces.rest.controller;
 
 public class Attendance {
     public String player;

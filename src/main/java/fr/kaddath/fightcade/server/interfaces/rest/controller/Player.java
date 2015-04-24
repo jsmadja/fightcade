@@ -1,4 +1,4 @@
-package fr.kaddath.fightcade.server.interfaces.rest.controller.agency;
+package fr.kaddath.fightcade.server.interfaces.rest.controller;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

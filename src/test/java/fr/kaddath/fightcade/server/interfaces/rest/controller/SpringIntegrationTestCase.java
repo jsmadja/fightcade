@@ -1,4 +1,4 @@
-package fr.kaddath.fightcade.server.interfaces.rest.controller.agency;
+package fr.kaddath.fightcade.server.interfaces.rest.controller;
 
 import fr.kaddath.fightcade.server.Application;
 import org.junit.runner.RunWith;

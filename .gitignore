@@ -1,7 +1,9 @@
 # Logs
+*.iml
 logs
+target
 *.log
-
+.idea/*
 # Runtime data
 pids
 *.pid
