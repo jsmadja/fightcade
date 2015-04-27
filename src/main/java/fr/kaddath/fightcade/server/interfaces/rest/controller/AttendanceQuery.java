@@ -1,6 +1,8 @@
 package fr.kaddath.fightcade.server.interfaces.rest.controller;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import fr.kaddath.fightcade.server.infrastructure.CSVService;
+import fr.kaddath.fightcade.server.infrastructure.FightcadeService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,15 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 
-import static java.lang.String.format;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -27,10 +24,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class AttendanceQuery {
 
     @Autowired
-    private EntityManager entityManager;
+    private FightcadeService fightcadeService;
+
+    @Autowired
+    private CSVService csvService;
 
     @ApiOperation(value = "Attendance in CSV")
-    @RequestMapping(value = "/", method = GET)
+    @RequestMapping(value = "/line", method = GET)
     public String attendance(
             @RequestParam(value = "game", required = false) String game,
             @RequestParam(value = "country", required = false) String country,
@@ -39,93 +39,52 @@ public class AttendanceQuery {
         if (offset == null) {
             offset = new Date().getTimezoneOffset();
         }
-        int offsetInHours = (new Date().getTimezoneOffset() - offset) / 60;
-        int[][] count = toTable(game, country, offsetInHours);
-        StringBuilder sb = new StringBuilder();
-        sb.append("x, y, value").append("\n");
-        for (int day = 0; day < 7; day++) {
-            for (int hour = 0; hour < 24; hour++) {
-                sb.append(format("%s,%s,%d\n", hour, day, count[day][hour]));
-            }
-        }
-        return sb.toString().trim();
-    }
-
-    @ApiOperation(value = "Attendance in CSV")
-    @RequestMapping(value = "/line", method = GET)
-    public String attendanceForLine(
-            @RequestParam(value = "game", required = false) String game,
-            @RequestParam(value = "country", required = false) String country,
-            @RequestParam(value = "offset", required = false) Integer offset
-    ) {
-        if (offset == null) {
-            offset = new Date().getTimezoneOffset();
-        }
-        int offsetInHours = (new Date().getTimezoneOffset() - offset) / 60;
-        int[][] count = toTable(game, country, offsetInHours);
-        StringBuilder sb = new StringBuilder();
-        sb.append("hours,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday").append("\n");
-        for (int hour = 0; hour < 24; hour++) {
-            sb.append(hour);
-            for (int day = 0; day < 7; day++) {
-                sb.append(format(",%d", count[day][hour]));
-            }
-            sb.append("\n");
-        }
-        return sb.toString().trim();
-    }
-
-    private int[][] toTable(String game, String country, int offsetInHours) {
-        if("Anywhere".equals(country)) {
+        if ("Anywhere".equals(country)) {
             country = null;
         }
-        Collection<Object[]> results = attendanceSql(game, country);
+        int offsetInHours = (new Date().getTimezoneOffset() - offset) / 60;
+        Collection<Object[]> results = fightcadeService.getAttendance(game, country);
+        int[][] count = transformAsArray(results, offsetInHours);
+        return csvService.buildCSV(count);
+    }
+
+    private int[][] transformAsArray(Collection<Object[]> results, int offsetInHours) {
         int[][] count = new int[7][24];
         for (Object[] result : results) {
             DateTime date = new DateTime(result[0]).plusHours(offsetInHours);
-            count[(date.getDayOfWeek() + 6) % 7][date.getHourOfDay()] = ((BigInteger) result[1]).intValue();
+            int day = (date.getDayOfWeek() + 6) % 7;
+            int hour = date.getHourOfDay();
+            int players = ((BigInteger) result[1]).intValue();
+            if (count[day][hour] == 0) {
+                count[day][hour] = players;
+            }
         }
         return count;
     }
 
-    @Transactional
     @ApiOperation(value = "Post Attendance")
     @RequestMapping(value = "/players", method = POST)
     public void attendance(@RequestBody Attendance attendance) {
-        entityManager.persist(new Player(new PlayerId(new Date(), attendance.player, attendance.rom), attendance.country));
-    }
-
-    private Collection attendanceSql(String game, String country) {
-        String query = format("SELECT date, COUNT(DISTINCT player) FROM player WHERE date >= '%s' ", new DateTime().minusDays(7).toDateTimeISO());
-        if (country != null) {
-            query += " AND country = '" + country + "'";
+        if (!"lobby".equalsIgnoreCase(attendance.rom)) {
+            fightcadeService.save(attendance);
         }
-        if (game != null) {
-            query += " AND rom = '" + game + "'";
-        }
-        query += " GROUP BY DAY(date), HOUR(date)";
-        return entityManager.createNativeQuery(query).getResultList();
     }
 
     @ApiOperation(value = "Games")
     @RequestMapping(value = "/games", method = GET)
     public Collection games() {
-        List games = entityManager.createNativeQuery("SELECT rom,name FROM stat ORDER BY name ASC").getResultList();
-        games.add(0, new Object[]{"", "Any game"});
-        return games;
+        return fightcadeService.getGames();
     }
 
     @ApiOperation(value = "Countries")
     @RequestMapping(value = "/countries", method = GET)
     public Collection countries() {
-        List countries = entityManager.createNativeQuery("SELECT DISTINCT(country) FROM player WHERE country !='' ORDER BY country ASC").getResultList();
-        countries.add(0, "Anywhere");
-        return countries;
+        return fightcadeService.getCountries();
     }
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void cleanDatabase() {
-        entityManager.createNativeQuery(format("DELETE FROM player WHERE date < '%s'", new DateTime().minusDays(7).toDateTimeISO()));
+        fightcadeService.deleteOldValues();
     }
 
 }
