@@ -58,6 +58,7 @@
         if(game) {
             url += '&game='+game;
         }
+        url += '&offset='+new Date().getTimezoneOffset();
 
         $.ajax({url:url,success:function (csv) {
 

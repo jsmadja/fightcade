@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static java.lang.String.format;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -78,11 +79,11 @@ public class AttendanceQuery {
         if("Anywhere".equals(country)) {
             country = null;
         }
-        Collection<Object[]> results = attendanceSql(game, country, offsetInHours);
+        Collection<Object[]> results = attendanceSql(game, country);
         int[][] count = new int[7][24];
         for (Object[] result : results) {
-            Date date = (Date) result[0];
-            count[(date.getDay() + 6) % 7][date.getHours()] = ((BigInteger) result[1]).intValue();
+            DateTime date = new DateTime(result[0]).plusHours(offsetInHours);
+            count[(date.getDayOfWeek() + 6) % 7][date.getHourOfDay()] = ((BigInteger) result[1]).intValue();
         }
         return count;
     }
@@ -94,8 +95,8 @@ public class AttendanceQuery {
         entityManager.persist(new Player(new PlayerId(new Date(), attendance.player, attendance.rom), attendance.country));
     }
 
-    private Collection attendanceSql(String game, String country, int offsetInHours) {
-        String query = format("SELECT date, COUNT(DISTINCT player) FROM player WHERE date >= '%s' ", new DateTime().plusHours(offsetInHours).minusDays(7).toDateTimeISO());
+    private Collection attendanceSql(String game, String country) {
+        String query = format("SELECT date, COUNT(DISTINCT player) FROM player WHERE date >= '%s' ", new DateTime().minusDays(7).toDateTimeISO());
         if (country != null) {
             query += " AND country = '" + country + "'";
         }
