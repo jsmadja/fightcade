@@ -1,6 +1,5 @@
 package fr.kaddath.fightcade.server;
 
-import com.mangofactory.swagger.plugin.EnableSwagger;
 import fr.kaddath.fightcade.server.infrastructure.filter.CORSFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -15,7 +14,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-@EnableSwagger
 @EnableSpringConfigured
 @EnableScheduling
 public class Application extends SpringBootServletInitializer {

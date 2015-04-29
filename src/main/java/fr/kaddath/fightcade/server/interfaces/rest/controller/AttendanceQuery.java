@@ -1,6 +1,5 @@
 package fr.kaddath.fightcade.server.interfaces.rest.controller;
 
-import com.wordnik.swagger.annotations.ApiOperation;
 import fr.kaddath.fightcade.server.infrastructure.CSVService;
 import fr.kaddath.fightcade.server.infrastructure.FightcadeService;
 import org.joda.time.DateTime;
@@ -29,7 +28,6 @@ public class AttendanceQuery {
     @Autowired
     private CSVService csvService;
 
-    @ApiOperation(value = "Attendance in CSV")
     @RequestMapping(value = "/line", method = GET)
     public String attendance(
             @RequestParam(value = "game", required = false) String game,
@@ -62,7 +60,6 @@ public class AttendanceQuery {
         return count;
     }
 
-    @ApiOperation(value = "Post Attendance")
     @RequestMapping(value = "/players", method = POST)
     public void attendance(@RequestBody Attendance attendance) {
         if (!"lobby".equalsIgnoreCase(attendance.rom)) {
@@ -70,13 +67,11 @@ public class AttendanceQuery {
         }
     }
 
-    @ApiOperation(value = "Games")
     @RequestMapping(value = "/games", method = GET)
     public Collection games() {
         return fightcadeService.getGames();
     }
 
-    @ApiOperation(value = "Countries")
     @RequestMapping(value = "/countries", method = GET)
     public Collection countries() {
         return fightcadeService.getCountries();
@@ -84,7 +79,9 @@ public class AttendanceQuery {
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void cleanDatabase() {
-        fightcadeService.deleteOldValues();
+        if (System.getProperty("test.in.progress") == null) {
+            fightcadeService.deleteOldValues();
+        }
     }
 
 }

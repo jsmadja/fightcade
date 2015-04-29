@@ -10,4 +10,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 @SpringApplicationConfiguration(classes = Application.class)
 public abstract class SpringIntegrationTestCase {
+
+    static {
+        System.setProperty("test.in.progress", "true");
+    }
+
 }
