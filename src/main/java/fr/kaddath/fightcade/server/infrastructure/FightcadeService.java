@@ -48,7 +48,7 @@ public class FightcadeService {
                 query += format("AND rom = '%s'", game);
             }
         }
-        query += " GROUP BY DAY(date), HOUR(date)";
+        query += " GROUP BY DAY(date), HOUR(date) ORDER BY date ASC ";
         return entityManager.createNativeQuery(query).getResultList();
     }
 
