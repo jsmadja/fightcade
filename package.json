@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/jsmadja/fightcade#readme",
   "devDependencies": {
+    "bluebird": "^3.4.6",
     "chai": "^3.5.0",
     "coveralls": "^2.11.14",
     "eslint": "^3.9.1",
