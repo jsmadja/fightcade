@@ -7,14 +7,10 @@ describe('Country', function () {
     before(() => {
         require('../../app/index');
     });
-    beforeEach(() => {
-    });
 
     it('get all countries', (done) => {
-        // Given
         API.getCountries()
-        // Then
-            .then((res) => {
+            .then(res => {
                 assert.deepEqual(res.body,
                     [
                         'Albania',
@@ -23,17 +19,13 @@ describe('Country', function () {
                         'Argentina',
                         'Australia',
                         'Austria',
-                        'Azerbaijan',
                         'Bahamas',
                         'Bahrain',
                         'Bangladesh',
                         'Barbados',
-                        'Belarus',
                         'Belgium',
                         'Bolivia',
-                        'Bosnia and Herzegovina',
                         'Brazil',
-                        'Brunei',
                         'Bulgaria',
                         'Cameroon',
                         'Canada',
@@ -54,46 +46,39 @@ describe('Country', function () {
                         'Finland',
                         'France',
                         'Germany',
-                        'Gibraltar',
                         'Greece',
+                        'Grenada',
                         'Guadeloupe',
+                        'Guam',
                         'Guatemala',
-                        'Guyana',
                         'Hashemite Kingdom of Jordan',
                         'Honduras',
                         'Hong Kong',
                         'Hungary',
                         'India',
                         'Indonesia',
-                        'Iran',
                         'Iraq',
                         'Ireland',
+                        'Isle of Man',
                         'Israel',
                         'Italy',
                         'Jamaica',
                         'Japan',
-                        'Jersey',
                         'Kazakhstan',
-                        'Kuwait',
                         'Latvia',
                         'Lebanon',
                         'Macao',
                         'Macedonia',
                         'Malaysia',
-                        'Malta',
+                        'Mauritania',
                         'Mexico',
-                        'Mongolia',
-                        'Montenegro',
                         'Morocco',
-                        'Mozambique',
                         'Netherlands',
                         'New Zealand',
                         'Nicaragua',
-                        'Nigeria',
                         'Norway',
-                        'null',
-                        'Oman',
                         'Pakistan',
+                        'Palestine',
                         'Panama',
                         'Paraguay',
                         'Peru',
@@ -103,16 +88,14 @@ describe('Country', function () {
                         'Puerto Rico',
                         'Qatar',
                         'Republic of Korea',
-                        'Republic of Lithuania',
                         'Republic of Moldova',
                         'Romania',
                         'Russia',
-                        'Saint Vincent and the Grenadines',
+                        'Saint Martin',
                         'Saudi Arabia',
                         'Senegal',
                         'Serbia',
                         'Singapore',
-                        'Slovak Republic',
                         'Slovenia',
                         'South Africa',
                         'Spain',
@@ -130,8 +113,7 @@ describe('Country', function () {
                         'Uruguay',
                         'Venezuela',
                         'Vietnam',
-                        'Yemen',
-                        'Zimbabwe'
+                        'Yemen'
                     ]);
             })
             .then(done)

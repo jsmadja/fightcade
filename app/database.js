@@ -6,16 +6,17 @@ const log = require('winston');
 
 const connection = Mysql.createConnection({
     host: 'hiscores.shmup.com', //process.env.RDS_HOST,
-    user: 'palmares',//process.env.RDS_USER,
+    user: 'fightcade',//process.env.RDS_USER,
     port: 3306, //process.env.RDS_PORT,
-    password: 'palmares', //process.env.RDS_PASSWORD,
-    database: 'palmares', //process.env.RDS_DATABASE,
+    password: 'fightcade', //process.env.RDS_PASSWORD,
+    database: 'fightcade_test', //process.env.RDS_DATABASE,
     debug: false
 });
 connection.connect();
 
 const query = (sql, values) => {
     if (connection.debug) {
+        //noinspection Eslint
         console.log(sql);
     }
     values = values || [];
