@@ -11,7 +11,7 @@ const execute = (fn) =>
         });
 
 module.exports = {
-    getCountries: (token) =>
+    getCountries: () =>
         execute(
             request
                 .get(`${host}/countries`))
