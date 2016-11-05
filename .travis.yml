@@ -1,5 +1,5 @@
 env:
-  - CXX=g++-4.8 COVERALLS_REPO_TOKEN=PXOsSus6WfsvwzKISEadhGBZONtz6asEm
+  - COVERALLS_REPO_TOKEN=PxXhtCSZVf9aoDwev7DwnGY5mcYEC7EO5
 language: node_js
 node_js:
   - "6"
