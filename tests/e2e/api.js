@@ -13,5 +13,5 @@ const execute = (fn) =>
 module.exports = {
     getCountries: () => execute(request.get(`${host}/countries`)),
     getGames: () => execute(request.get(`${host}/games`)),
-    getAttendance: (game, country, offset) => execute(request.get(`${host}/line?country=${country}&game=${game}&offset=${offset}`))
+    getAttendance: (game, country, offset) => execute(request.get(`${host}/line?country=${country}&game=${game}&offset=${offset}&forced_offset=-60`))
 };

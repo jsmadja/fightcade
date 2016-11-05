@@ -1,16 +1,15 @@
-FROM node:6.4
+FROM node:6.9
 
-MAINTAINER Julien Smadja <jsmadja@xebia.fr>
+MAINTAINER Julien Smadja <julien.smadja@gmail.com>
 
-RUN mkdir /xebicon
-WORKDIR /xebicon
+RUN mkdir /fightcade
+WORKDIR /fightcade
 
 COPY package.json package.json
-RUN npm i bluebird
 RUN npm i --production
 
 COPY app app
 
-EXPOSE 3000
+EXPOSE 8765
 
 CMD [ "npm", "start" ]

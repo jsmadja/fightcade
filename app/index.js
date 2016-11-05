@@ -31,7 +31,7 @@ app.get('/games', (req, res) =>
 
 app.get('/line', (req, res) =>
     PlayerService
-        .getAttendance(req.query.game, req.query.country, req.query.offset)
+        .getAttendance(req.query.game, req.query.country, req.query.offset, req.query.forced_offset)
         .then(attendance => res.json(attendance))
 );
 

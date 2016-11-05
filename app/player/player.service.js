@@ -16,8 +16,9 @@ const toCSV = count => {
     return sb.trim();
 };
 
-const createAttendanceMatrix = (offset, rows) => {
-    const offsetInHours = (new Date().getTimezoneOffset() - offset) / 60;
+const createAttendanceMatrix = (offset, rows, forcedOffset) => {
+    const timezoneOffset = forcedOffset || new Date().getTimezoneOffset();
+    const offsetInHours = (timezoneOffset - offset) / 60;
     const count = new Array(7);
     for (let i = 0; i < count.length; i++) {
         count[i] = _.fill(new Array(24), 0);
@@ -34,7 +35,7 @@ const createAttendanceMatrix = (offset, rows) => {
     return count;
 };
 
-PlayerService.getAttendance = (game, country, offset) => {
+PlayerService.getAttendance = (game, country, offset, forcedOffset) => {
     if (!offset) {
         offset = new Date().getTimezoneOffset();
     }
@@ -43,7 +44,7 @@ PlayerService.getAttendance = (game, country, offset) => {
     }
     return PlayerDb
         .getAttendance(game, country)
-        .then(rows => createAttendanceMatrix(offset, rows))
+        .then(rows => createAttendanceMatrix(offset, rows, forcedOffset))
         .then(toCSV);
 };
 
