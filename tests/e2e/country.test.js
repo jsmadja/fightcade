@@ -3,7 +3,7 @@
 const assert = require('assert');
 const API = require('./api');
 
-describe('API', function () {
+describe('Country', function () {
     before(() => {
         require('../../app/index');
     });
@@ -38,7 +38,6 @@ describe('API', function () {
                         'Cameroon',
                         'Canada',
                         'Catalonia',
-                        'Cayman Islands',
                         'Chile',
                         'China',
                         'Colombia',
